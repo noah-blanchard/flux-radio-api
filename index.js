@@ -7,23 +7,25 @@ const express = require("express");
 const app = express();
 const port = 3320;
 
+// get endpoints
+
 app.get("/", async (req, res) => {
   res.send(await getAll());
 });
 
-//app get with parameter "title"
 app.get("/:title", async (req, res) => {
-    console.log(req.params.title);
     res.send(await getByTitle(req.params.title));
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.get("/:year/:num/:htm", async (req, res) => {
+  const link = "http://fluxradios.blogspot.com/" + req.params.year + "/" + req.params.num + "/" + req.params.htm;
+  res.send(await getRadioInfos(link));
+})
 
-//fetch url with axios async/await
+// get endpoints functions
+
 async function getAll() {
-  const $ = cheerio.load(await fetch());
+  const $ = cheerio.load(await fetchAll());
   const radios = [];
   $(".post-body a").each(function (i, elem) {
     if (!($(elem).text().length === 0) && !($(elem).attr("href")[0] === "#")) {
@@ -36,8 +38,20 @@ async function getAll() {
   return radios;
 }
 
-//async function fetching axios with error handling
-async function fetch() {
+async function getByTitle(title) {
+  const $ = cheerio.load(await fetchAll());
+  const radios = await getAll();
+  return radios.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
+}
+
+async function getRadioInfos(link){
+  const $ = cheerio.load(await fetchRadio(link));
+  return {quality: "unkown", link:$("tr > td > span > span").first().text()};
+}
+
+// axios fetch to get the content of the page
+
+async function fetchAll() {
   try {
     const response = await axios.get(url);
     return response.data;
@@ -46,8 +60,17 @@ async function fetch() {
   }
 }
 
-async function getByTitle(title) {
-    const $ = cheerio.load(await fetch());
-    const radios = await getAll();
-    return radios.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
+async function fetchRadio(link) {
+  try {
+    const response = await axios.get(link);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 }
+
+// start the server
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
