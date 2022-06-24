@@ -1,0 +1,15 @@
+{
+  "name": "flux-radio-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.11",
+    "express": "^4.18.1"
+  },
+  "scripts":{
+	  "start": "node index.js",
+	  "dev": "nodemon index.js"
+  }
+}
