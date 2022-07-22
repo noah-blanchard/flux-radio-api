@@ -18,8 +18,9 @@ app.get("/:title", async (req, res) => {
 });
 
 app.get("/:year/:num/:htm", async (req, res) => {
-  const link = "http://fluxradios.blogspot.com/" + req.params.year + "/" + req.params.num + "/" + req.params.htm;
-  res.send(await getRadioInfos(link));
+  const path = req.params.year + "/" + req.params.num + "/" + req.params.htm;
+  const link = "http://fluxradios.blogspot.com/" + path;
+  res.send(await getRadioInfos(link, path));
 })
 
 // get endpoints functions
@@ -45,9 +46,9 @@ async function getByTitle(title) {
   return radios.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
 }
 
-async function getRadioInfos(link) {
+async function getRadioInfos(link, path) {
   const $ = cheerio.load(await fetchRadio(link));
-  return { quality: "unkown", link: ($("tr > td > span > span").first().text()).replace(/\s/g, "") };
+  return { quality: "unkown", link: ($("tr > td > span > span").first().text()).replace(/\s/g, ""), path: path, title: ($(".post-body >  table > tbody > tr > td > b > span > span").first().text()).replace(/\s/g, "")};
 }
 
 // axios fetch to get the content of the page
