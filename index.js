@@ -32,7 +32,7 @@ async function getAll() {
       radios.push({
         title: $(elem).text(),
         link: $(elem).attr("href"),
-        path: $(elem).attr("href").split("/")[3]
+        path: $(elem).attr("href").split("/")[3] + "/" + $(elem).attr("href").split("/")[4] + "/" + $(elem).attr("href").split("/")[5],
       });
     }
   });
