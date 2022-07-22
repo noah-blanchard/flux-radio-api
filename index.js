@@ -38,12 +38,13 @@ app.get("/:year/:num/:htm", async (req, res) => {
 
 async function getAll() {
 
-  let radios = cache.get("radios");
-  if (radios.length > 0) {
-    return radios;
+  const cached = cache.get("radios");
+  if(cached){
+    console.log("Cache used at : " + new Date());
+    return cached;
   }
   console.log("Cache not found, fetching from internet and updating cache : " + new Date());
-  radios = [];
+  const radios = [];
   const $ = cheerio.load(await fetchAll());
   $(".post-body a").each(function (i, elem) {
     if (!($(elem).text().length === 0) && !($(elem).attr("href")[0] === "#")) {
@@ -59,13 +60,15 @@ async function getAll() {
 }
 
 async function getByTitle(title) {
-  const radios = cache.get("radios");
-  if (!radios) {
-    console.log("Cache not found, fetching from internet and updating cache : " + new Date());
-    const $ = cheerio.load(await fetchAll());
-    radios = await getAll();
-    await updateCache(radios);
+
+  const cached = cache.get("radios");
+  if(cached){
+    console.log("Cache used at : " + new Date());
+    return cached.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
   }
+  const $ = cheerio.load(await fetchAll());
+  const radios = await getAll();
+  await updateCache(radios);
   return radios.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
 
 }
