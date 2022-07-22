@@ -14,7 +14,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/:title", async (req, res) => {
-    res.send(await getByTitle(req.params.title));
+  res.send(await getByTitle(req.params.title));
 });
 
 app.get("/:year/:num/:htm", async (req, res) => {
@@ -45,9 +45,9 @@ async function getByTitle(title) {
   return radios.filter((radio) => radio.title.toLowerCase().includes(title.toLowerCase()));
 }
 
-async function getRadioInfos(link){
+async function getRadioInfos(link) {
   const $ = cheerio.load(await fetchRadio(link));
-  return {quality: "unkown", link:$("tr > td > span > span").first().text()};
+  return { quality: "unkown", link: ($("tr > td > span > span").first().text()).replace(" ", "") };
 }
 
 // axios fetch to get the content of the page
