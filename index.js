@@ -47,7 +47,7 @@ async function getByTitle(title) {
 
 async function getRadioInfos(link) {
   const $ = cheerio.load(await fetchRadio(link));
-  return { quality: "unkown", link: ($("tr > td > span > span").first().text()).replace(" ", "") };
+  return { quality: "unkown", link: ($("tr > td > span > span").first().text()).replace(/\s/g, "") };
 }
 
 // axios fetch to get the content of the page
